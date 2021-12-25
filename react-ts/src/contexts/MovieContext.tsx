@@ -1,0 +1,49 @@
+import { PropTypes } from "@mui/material";
+import { createContext, ReactNode, useState } from "react";
+import {v4 as uuidv4} from 'uuid'
+
+interface MovieContextProps{
+    children: ReactNode
+}
+
+interface Movie {
+    id: string, 
+    title: string 
+}
+
+interface MovieContextDefault {
+    movies:  Movie[]
+    addMovie: (title: string) => void
+    //k return gi ca ma chi dua them Movie vao Movie array 
+
+    deleteMovie: (id: string) => void
+}
+
+const movieContextDefaultData = {
+    movies: [],
+    addMovie: () => null,
+    deleteMovie: () => null
+}
+
+export const MovieContext = createContext<MovieContextDefault>(movieContextDefaultData)
+
+const MovieContextProvider = ({children} : MovieContextProps) => {
+
+    const [movies, setMovies] = useState<Movie[]>(movieContextDefaultData.movies)
+
+
+   const addMovie = (title: string) => setMovies([...movies, {id: uuidv4(), title}])
+
+
+   const deleteMovie = (id: string) => setMovies(movies.filter(movie => movie.id != id))
+
+   const movieContextData = {movies, addMovie, deleteMovie}
+
+ 
+
+    return <MovieContext.Provider value={movieContextData}>
+        {children}
+    </MovieContext.Provider>
+}
+
+export default MovieContextProvider
